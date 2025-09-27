@@ -1,0 +1,68 @@
+-- Place this LocalScript inside StarterGui
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+
+-- Roblox link to copy
+local robloxLink = "https://getscript.webnode.page/?_gl=1*1fefq3b*_gcl_aw*R0NMLjE3NTg5Mzc0NzkuQ2p3S0NBanc4OWpHQmhCMEVpd0EybzFPbjlWVFhVSGlXYUloM0MwRG8xRTBXMmlVUmo4bm04QVg2WlRZSWZaa2ZKSmk5LWhsTGxHRXJ4b0N0dVFRQXZEX0J3RQ..*_gcl_au*NzkyOTIyOTUwLjE3NTg5Mzc0ODAuMTQzODg4NDkzNS4xNzU4OTM3NTY4LjE3NTg5Mzc1Njc."
+
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "GetKeyGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- Create the semi-transparent black frame in the center
+local frame = Instance.new("Frame")
+frame.Name = "CenterFrame"
+frame.BackgroundColor3 = Color3.new(0, 0, 0)
+frame.BackgroundTransparency = 0.3 -- slightly see-through black
+frame.BorderColor3 = Color3.new(1, 1, 1) -- white border
+frame.BorderSizePixel = 2
+frame.Size = UDim2.new(0, 300, 0, 100) -- medium large size
+frame.Position = UDim2.new(0.5, -150, 0.5, -50) -- center of screen
+frame.Parent = screenGui
+
+-- Create the "Get key" TextButton
+local button = Instance.new("TextButton")
+button.Name = "GetKeyButton"
+button.BackgroundColor3 = Color3.new(0, 0, 0)
+button.BackgroundTransparency = 1 -- fully transparent background inside frame
+button.Size = UDim2.new(1, 0, 1, 0)
+button.Font = Enum.Font.SourceSansBold
+button.Text = "Get key"
+button.TextColor3 = Color3.new(1, 1, 1)
+button.TextScaled = true
+button.Parent = frame
+
+-- Function to copy link to clipboard
+local function copyLink()
+    -- Roblox does not have a native clipboard API, but TextService:SetClipboard works in Studio and some clients
+    local success, err = pcall(function()
+        setclipboard(robloxLink)
+    end)
+    if not success then
+        warn("Failed to copy to clipboard: "..tostring(err))
+    end
+end
+
+-- Show the frame with a fade-in effect
+frame.BackgroundTransparency = 1
+local tweenIn = TweenService:Create(frame, TweenInfo.new(0.5), {BackgroundTransparency = 0.3})
+tweenIn:Play()
+
+-- Button click event
+button.MouseButton1Click:Connect(function()
+    copyLink()
+    -- Optional: give feedback by changing text temporarily
+    button.Text = "Copied!"
+    wait(2)
+    button.Text = "Get key"
+    -- Hide the frame with fade out
+    local tweenOut = TweenService:Create(frame, TweenInfo.new(0.5), {BackgroundTransparency = 1})
+    tweenOut:Play()
+    tweenOut.Completed:Wait()
+    screenGui:Destroy()
+end)
